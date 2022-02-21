@@ -11,12 +11,17 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./src",
+    "typeRoots": [
+      "./src/@types/",
+      "./node_modules/@types"
+    ],
     "incremental": true,
     "skipLibCheck": true,
     "paths": {
       "@utils/*": ["utils/*"],
       "@models/*": ["models/*"],
-      "@controllers/*": ["controllers/*"]
+      "@controllers/*": ["controllers/*"],
+      "express":["@types/*"]
 
     },
 

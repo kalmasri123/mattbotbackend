@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import KeyWord from '@models/KeyWord';
 import { body, cookie, param, validationResult } from 'express-validator';
 import * as mongoose from 'mongoose';
-import { DiscordTokenExpiredError, getMongoError } from '@utils/errors';
+import { DiscordAuthError, DiscordTokenExpiredError, getMongoError } from '@utils/errors';
 import { isObjectId, toObjectId } from '@utils/sanitizers';
 import {
     getDiscordUserFromAccessToken,
@@ -33,10 +33,8 @@ function setCookies(tokens: TokenSet, res: Response) {
 export const tokenValidator = [cookie('accessToken').exists(), cookie('refreshToken').exists()];
 
 export const me = async (req: Request, res: Response, next: NextFunction) => {
-    const { accessToken, refreshToken }: TokenSet = req.cookies;
     try {
-        const discordUser = await getDiscordUserFromAccessToken(accessToken);
-        const user = await User.find({ id: discordUser.id });
+        const user = await User.find({ id: req.user.userId });
         res.json(user);
     } catch (err) {
         next(err);
@@ -44,10 +42,19 @@ export const me = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 export const refresh = async (req: Request, res: Response, next: NextFunction) => {
-    let refreshToken = req.cookies['refreshToken'];
-    const tokens: TokenSet = await refreshAccessToken(refreshToken);
-    setCookies(tokens, res);
-    res.json({ success: true });
+    try {
+        let refreshToken = req.cookies['refreshToken'];
+        if (!refreshToken) throw new DiscordAuthError();
+
+        const tokens: TokenSet = await refreshAccessToken(refreshToken);
+        setCookies(tokens, res);
+        res.json({ success: true });
+    } catch (err) {
+        res.clearCookie('refreshToken');
+        res.clearCookie('accessToken');
+        res.clearCookie('authMethod');
+        next(err);
+    }
 };
 
 export const login = async (req: Request, res: Response, next: NextFunction) => {

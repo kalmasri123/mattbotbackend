@@ -1,5 +1,9 @@
 import * as mongoose from 'mongoose';
-const User = new mongoose.Schema({
+export interface UserObj {
+    authMethod:string,
+    userId: string
+}
+const User = new mongoose.Schema<UserObj>({
     authMethod: { type: String, required: true },
     userId: { type: String, required: true },
 });
