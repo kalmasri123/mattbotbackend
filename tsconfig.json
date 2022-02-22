@@ -21,7 +21,6 @@
       "@utils/*": ["utils/*"],
       "@models/*": ["models/*"],
       "@controllers/*": ["controllers/*"],
-      "express":["@types/*"]
 
     },
 
