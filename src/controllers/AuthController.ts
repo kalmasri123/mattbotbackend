@@ -33,13 +33,8 @@ function setCookies(tokens: TokenSet, res: Response) {
 export const tokenValidator = [cookie('accessToken').exists(), cookie('refreshToken').exists()];
 
 export const me = async (req: Request, res: Response, next: NextFunction) => {
-    console.log("REACHED")
-    try {
-        const user = await User.find({ id: req.user.userId });
-        res.json(user);
-    } catch (err) {
-        next(err);
-    }
+    console.log('REACHED');
+    res.json(req.user);
 };
 
 export const refresh = async (req: Request, res: Response, next: NextFunction) => {
@@ -60,6 +55,7 @@ export const refresh = async (req: Request, res: Response, next: NextFunction) =
 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        let redirectRoute = req.query['state'];
         let err;
         const tokens = await getTokenPairFromCode(req.query.code?.toString()).catch(
             (error) => (err = error),
@@ -69,12 +65,19 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
         let user = await User.findOne({ userId: discordUser.id, authMethod: 'discord' });
         if (!user) {
-            user = new User({ userId: discordUser.id, authMethod: 'discord' });
+            user = new User({
+                userId: discordUser.id,
+                authMethod: 'discord',
+                username: discordUser.username,
+                avatar: discordUser.avatar
+            });
             await user.save();
         }
 
         setCookies(tokens, res);
-
+        if (redirectRoute) {
+            return res.redirect(process.env.FRONTEND_URL + redirectRoute);
+        }
         res.json({ success: true });
     } catch (err) {
         next(err);

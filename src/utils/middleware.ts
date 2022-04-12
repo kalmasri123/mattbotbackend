@@ -8,7 +8,10 @@ export const discordGuard = async (req: Request, res: Express.Response, next: Ne
     console.log(req.cookies);
     if (!accessToken) return next(new DiscordAuthError());
     const discordUser = await getDiscordUserFromAccessToken(accessToken);
-    const user = await User.findOne({ userId: discordUser.id });
+    const user = await User.findOneAndUpdate(
+        { userId: discordUser.id },
+        { $set: { username: discordUser.username, avatar: discordUser.avatar } },
+    );
     req.user = user;
     next();
 };
