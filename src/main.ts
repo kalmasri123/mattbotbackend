@@ -1,11 +1,9 @@
 import * as express from 'express';
 import api from 'routes';
-import * as dotenv from 'dotenv';
+
 import * as bodyParser from 'body-parser';
-import { readSync } from 'fs';
 import * as cookieParser from 'cookie-parser';
-import { UserObj } from '@models/User';
-dotenv.config();
+
 import * as cors from 'cors';
 const app = express();
 const PORT = process.env.port || 3000;
