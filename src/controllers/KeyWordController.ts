@@ -7,6 +7,7 @@ import { isObjectId, toObjectId } from '@utils/sanitizers';
 const ObjectId = mongoose.Types.ObjectId;
 export const all = async (req: Request, res: Response, next: NextFunction) => {
     const query = await KeyWord.find();
+    console.log('finding')
     return res.json(query);
 };
 export const addValidator = [

@@ -33,6 +33,7 @@ function setCookies(tokens: TokenSet, res: Response) {
 export const tokenValidator = [cookie('accessToken').exists(), cookie('refreshToken').exists()];
 
 export const me = async (req: Request, res: Response, next: NextFunction) => {
+    console.log("REACHED")
     try {
         const user = await User.find({ id: req.user.userId });
         res.json(user);

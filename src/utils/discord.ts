@@ -69,7 +69,7 @@ export const refreshAccessToken = async (refreshToken: string): Promise<TokenSet
 };
 export const getTokenPairFromCode = async (code: string): Promise<TokenSet> => {
     const { DISCORD_CLIENT_ID, DISCORD_REDIRECT_URI, DISCORD_CLIENT_SECRET } = process.env;
-
+    console.log(DISCORD_REDIRECT_URI)
     const params = new URLSearchParams();
     params.append('client_id', DISCORD_CLIENT_ID);
     params.append('client_secret', DISCORD_CLIENT_SECRET);
