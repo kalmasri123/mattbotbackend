@@ -3,7 +3,8 @@ import api from 'routes';
 
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
-
+import * as dotenv from 'dotenv';
+dotenv.config();
 import * as cors from 'cors';
 const app = express();
 const PORT = process.env.port || 3000;
@@ -20,7 +21,7 @@ const mongoose = require('mongoose');
 mongoose.connect(MONGO_URI);
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Credentials', 'true');
-    next()
+    next();
 });
 app.use(cors({ origin: 'http://localhost:3001' }));
 app.use(cookieParser());
